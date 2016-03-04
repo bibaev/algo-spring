@@ -1,0 +1,30 @@
+\section*{Хеширование}
+\begin{enumerate}
+	\item Семейство хэш-функций $\mathcal{H} = \{h : X \rightarrow Y \}$ называется универсальным, если:
+	
+	\begin{equation*}
+	\forall x_1, x_2 \in X, x_1 \neq x_2 : \underset{h \in \mathcal{H}}{\mathbf{Pr}} \left[h(x_1) = h(x_2)\right] \leqslant \frac{1}{|Y|}
+	\end{equation*}
+	
+	Семейство хэш-функций $\mathcal{H} = \{h : X \rightarrow Y \}$ называется $k$-независимым, если для любых различных $x_1, x_2, \cdots , x_k \in X$, для любых, возможно совпадающих, выполняется: $y_1, y_2, \cdots, y_k \in Y$
+	
+	\begin{equation*}
+	 \underset{h \in \mathcal{H}}{\mathbf{Pr}} \left[\bigwedge\limits_{i = 1}^{k} h(x_i) = y_i\right] = \frac{1}{|Y|^k}
+	\end{equation*}
+		
+	\begin{enumerate}
+		\item Докажите, что из любое 2-независимое семейство хэш-функций является универсальным.
+		\item Докажите, что любое $k + 1$-независимое семейство хэш-функций является $k$-независимым.
+	\end{enumerate}
+	
+	\item В вашем распоряжении есть пара 2-независимых семейств хеш-функций $\mathcal{A} = \{f : A \rightarrow F_2^n \}$ и $\mathcal{B} = \{g : B \rightarrow F_2^n \}$. Постройте (и докажите, что построено правильно) универсальное семейство хеш-функций, которое:
+	\begin{enumerate}
+		\item будет отправлять пары типа $(A, B)$ в $F_2^n$,
+		\item будет отправлять мультимножества из элементов типа $A$ в $F_2^n$,
+		\item будет отправлять множества из элементов типа $A$ в $F$,
+		\item будет отправлять списки из элементов типа $A$ в $F_2^n$.
+	\end{enumerate}
+		
+\end{enumerate}
+
+
