@@ -43,12 +43,14 @@ std::pair<int, int> get_min_lca(std::vector<std::vector<std::pair<int, int>>> co
     }
 
     for (auto i = log_n - 1; i >= 0; --i) {
-        min_weight = std::min(std::min(dp[v][i].second, dp[u][i].second), min_weight);
-        v = dp[v][i].first;
-        u = dp[u][i].first;
+        if(dp[v][i].first != dp[u][i].first) {
+            min_weight = std::min(std::min(dp[v][i].second, dp[u][i].second), min_weight);
+            v = dp[v][i].first;
+            u = dp[u][i].first;
+        }
     }
 
-    return std::make_pair(dp[v][0].first, min_weight);
+    return std::make_pair(dp[v][0].first, std::min(std::min(dp[v][0].second, dp[u][0].second), min_weight));
 }
 
 int main() {
