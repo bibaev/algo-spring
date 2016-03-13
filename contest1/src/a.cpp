@@ -10,10 +10,11 @@ void dfs(size_t vertex, graph const& graph, std::vector<uint8_t>& visited, timel
     visited[vertex] = 1;
     time[vertex].first = t++;
     for(auto const v : graph[vertex]) {
-        if(!visited[v]) {
+        if (visited[v] == 0) {
             dfs(v, graph, visited, time);
         }
     }
+
     time[vertex].second = t++;
 }
 
@@ -28,15 +29,15 @@ int main() {
     int v, u;
     graph g(n);
     auto root_number = 0;
-    for (auto u = 0; u < n; ++u) {
+    for (auto i = 0; i < n; ++i) {
         std::cin >> v;
         if (v == 0) {
-            root_number = v;
+            root_number = i;
         }
         else {
             --v;
-            g[u].push_back(v);
-            g[v].push_back(u);
+            g[i].push_back(v);
+            g[v].push_back(i);
         }
     }
 
@@ -50,7 +51,7 @@ int main() {
     for (auto i = 0; i < m; ++i) {
         std::cin >> u >> v;
         --u; --v;
-        result[i] = parent_check(times, u, v);
+        result[i] = static_cast<uint8_t>(parent_check(times, u, v));
     }
 
     std::for_each(result.begin(), result.end(), [](int val) {std::cout << val << std::endl; });
