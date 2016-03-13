@@ -33,8 +33,8 @@ std::pair<int, int> get_min_lca(std::vector<std::vector<std::pair<int, int>>> co
 
     for (auto i = log_n - 1; i >= 0; --i) {
         if (deep[u] - deep[v] >= pow(2, i)) {
-            u = dp[u][i].first;
             min_weight = std::min(min_weight, dp[u][i].second);
+            u = dp[u][i].first;
         }
     }
 
@@ -73,7 +73,7 @@ int main() {
 
     auto log_n = static_cast<int>(log2(n));
     std::vector<std::vector<std::pair<int, int>>> dp(n);
-    for (int i = 0; i < n; ++i) {
+    for (auto i = 0; i < n; ++i) {
         dp[i].resize(log_n);
         dp[i][0].first = parent[i];
         dp[i][0].second = weights[i];
