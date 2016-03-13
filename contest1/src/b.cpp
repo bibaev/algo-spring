@@ -26,13 +26,13 @@ std::pair<int, int> get_min_lca(std::vector<std::vector<std::pair<int, int>>> co
     }
     
     auto min_weight = INF;
-    const auto log_n = static_cast<int>(log2(dp.size()));
+    const auto log_n = static_cast<int>(ceil(log2(dp.size())));
     if(deep[v] > deep[u]) {
         std::swap(u, v);
     }
 
     for (auto i = log_n - 1; i >= 0; --i) {
-        if (deep[u] - deep[v] >= pow(2, i)) {
+        if (deep[u] - deep[v] >= 1 << i) {
             min_weight = std::min(min_weight, dp[u][i].second);
             u = dp[u][i].first;
         }
@@ -52,8 +52,7 @@ std::pair<int, int> get_min_lca(std::vector<std::vector<std::pair<int, int>>> co
 
     if (v != u && dp[v][0].first == dp[u][0].first)
         return std::make_pair(dp[v][0].first, std::min(std::min(dp[v][0].second, dp[u][0].second), min_weight));
-    else
-        return std::make_pair(v, min_weight);
+    return std::make_pair(v, min_weight);
 }
 
 int main() {
@@ -76,7 +75,7 @@ int main() {
     std::vector<int> d(n);
     dfs(0, graph, visited, times, d, 0);
 
-    auto log_n = static_cast<int>(log2(n));
+    auto log_n = static_cast<int>(ceil(log2(n)));
     std::vector<std::vector<std::pair<int, int>>> dp(n);
     for (auto i = 0; i < n; ++i) {
         dp[i].resize(log_n);
