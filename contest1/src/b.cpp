@@ -50,7 +50,10 @@ std::pair<int, int> get_min_lca(std::vector<std::vector<std::pair<int, int>>> co
         }
     }
 
-    return std::make_pair(dp[v][0].first, std::min(std::min(dp[v][0].second, dp[u][0].second), min_weight));
+    if (v != u && dp[v][0].first == dp[u][0].first)
+        return std::make_pair(dp[v][0].first, std::min(std::min(dp[v][0].second, dp[u][0].second), min_weight));
+    else
+        return std::make_pair(v, min_weight);
 }
 
 int main() {
@@ -88,8 +91,8 @@ int main() {
 
     for (auto j = 1; j < log_n; ++j) {
         for (auto i = 1; i < n; ++i) {
-            auto& prev_node = dp[i][j - 1];
-            auto& new_node = dp[prev_node.first][j - 1];
+            auto const& prev_node = dp[i][j - 1];
+            auto const& new_node = dp[prev_node.first][j - 1];
             dp[i][j].first = new_node.first;
             dp[i][j].second = std::min(prev_node.second, new_node.second);
         }
