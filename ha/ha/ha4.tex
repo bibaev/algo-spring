@@ -62,6 +62,24 @@
 		записанное неравенство.
 		
 		\item Вывести из Стрилинга, что $Q_k \le \left(\dfrac{e}{k}\right)^k$
+		
+		\textbf{Решение.} 
+		
+		Воспользуемся формулой $\binom{n}{k} = \dfrac{n!}{k!(n-k)!}$ и так же формулой Стирлинга: $n! \approx \sqrt{2\pi n}\left(\dfrac{n}{e}\right)^n$
+		
+		\begin{align*}
+			Q_k &= \binom{n}{k}\cdot \left( \frac{1}{n} \right)^k \cdot \left(1 - \frac{1}{n} \right)^{n-k} =
+			\binom{n}{k}\cdot \left( \frac{1}{n} \right)^k \cdot \left(\frac{n-1}{n} \right)^{n-k} = \\
+			&=\binom{n}{k} \cdot \left( \frac{1}{n} \right)^k \cdot \left( \frac{1}{n} \right)^n \cdot \left( 
+			\frac{1}{n} \right)^{-k} \cdot (n - 1)^{n - k} = \\
+			&=\binom{n}{k} \cdot \left( \frac{n - 1}{n} \right)^n \cdot \left(\frac{1}{n - 1} \right)^{k} =
+			 \frac{n!}{k!(n-k)!} \cdot \left( \frac{n - 1}{n} \right)^n \cdot \left(\frac{1}{n - 1} \right)^{k} 
+			 =\\
+			&= \frac{n^n e^k e^{n - k}}{e^n k^k (n-k)^{n-k}}\cdot \left( \frac{n - 1}{n} \right)^n \cdot \left(\frac{1}{n - 1} \right)^{k} = \frac{n^n}{k^k (n-k)^{n-k}}\cdot \left( \frac{n - 1}{n} \right)^n \cdot \left(\frac{1}{n - 1} \right)^{k}\\
+			&= \frac{1}{k^k} \cdot \left( \frac{n - 1}{n - k} \right)^{n - k} = \frac{1}{k^k} \left( 1+ \frac{k - 
+				1}{n - k} \right)^{n - k} \leqslant \frac{e^{k - 1}}{k^k} < \left(\dfrac{e}{k}\right)^k
+		\end{align*}
+		
 		\item Показать, что для некоторого $c \ge 1$ верно $Q_k \leqslant c \cdot \dfrac{\log n}{\log \log n}$.
 	\end{enumerate}
 	
