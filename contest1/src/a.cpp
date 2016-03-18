@@ -2,10 +2,10 @@
 #include <vector>
 #include <algorithm>
 
-typedef std::vector<std::vector<int>> graph;
+typedef std::vector<std::vector<int>> graph_t;
 typedef std::vector<std::pair<size_t, size_t>> timeline;
 
-void dfs(size_t vertex, graph const& graph, std::vector<uint8_t>& visited, timeline& time) {
+void dfs(size_t vertex, graph_t const& graph, std::vector<uint8_t>& visited, timeline& time) {
     static size_t t = 0;
     visited[vertex] = 1;
     time[vertex].first = t++;
@@ -27,7 +27,7 @@ int main() {
     std::cin >> n;
     
     int v, u;
-    graph g(n);
+    graph_t g(n);
     auto root_number = 0;
     for (auto i = 0; i < n; ++i) {
         std::cin >> v;
