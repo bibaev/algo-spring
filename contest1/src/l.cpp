@@ -4,12 +4,12 @@
 using namespace std;
 
 struct path {
-    path(path& other)
-        : vectices(other.vectices)
-        , rmq(other.rmq)
+    path(path&& other)
+        : vectices(move(other.vectices))
+        , rmq(move(other.rmq))
     {}
 
-    explicit path(vector<int>& vert)
+    explicit path(vector<int>&& vert)
         : vectices(vert){
         rmq.resize(4 * vectices.size(), 0);
     }
@@ -104,7 +104,7 @@ void build_heavy_light(vector<vector<int>>& decomposition, vector<uint8_t> const
     for (auto i = 0; i < n; ++i) {
         if (has_heavy_edge[i] == 0) {
             vector<int> path;
-            auto loc = 0;
+            int loc = 0;
             path.push_back(i);
             location[i].first = number;
             location[i].second = loc++;
@@ -112,11 +112,11 @@ void build_heavy_light(vector<vector<int>>& decomposition, vector<uint8_t> const
             while(to_parent_edge_heavy[p]){
                 p = parent[p];
                 location[p].first = number;
-                path.push_back(p);
                 location[p].second = loc++;
+                path.push_back(p);
             }
 
-            decomposition.emplace_back(path);
+            decomposition.emplace_back(move(path));
             ++number;
         }
     }
@@ -220,10 +220,10 @@ int main() {
     build_heavy_light(heavy_pathes, has_heavy_edge, to_parent_edge_heavy, parent, path_location);
     vector<path> decomposition;
     for (auto& heavy_path : heavy_pathes) {
-        decomposition.push_back(path(heavy_path));
+        decomposition.emplace_back(path(move(heavy_path)));
     }
 
-    auto log_n = static_cast<int>(ceil(log2(n)));
+    auto log_n = static_cast<int>(ceil(log2(n + 1)));
     vector<vector<int>> dp(n);
     build_lca(dp, log_n, parent, 0);
 
