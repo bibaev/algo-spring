@@ -51,7 +51,7 @@ int main() {
 
     std::vector<uint16_t> result;
     std::vector<int> count(k);
-    while(scanf("%d", &n) == 1) {
+    while(scanf_s("%d", &n) == 1) {
         result.resize(n, 0);
         result.assign(n, 0);
         count.assign(k, 0);
