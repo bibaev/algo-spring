@@ -4,18 +4,16 @@
 using namespace std;
 
 struct path {
-    path(path&& other)
-        : vectices(move(other.vectices))
-        , rmq(move(other.rmq))
+    path(path& other)
+        : vectices(other.vectices)
+        , rmq(other.rmq)
     {}
 
-    explicit path(vector<int>&& vert)
+    explicit path(vector<int>& vert)
         : vectices(vert){
         rmq.resize(4 * vectices.size(), 0);
-
     }
     vector<int> vectices;
-    vector<int> emit_level;
     vector<int> rmq;
 
     void update(int pos, int value) {
@@ -106,7 +104,7 @@ void build_heavy_light(vector<vector<int>>& decomposition, vector<uint8_t> const
     for (auto i = 0; i < n; ++i) {
         if (has_heavy_edge[i] == 0) {
             vector<int> path;
-            int loc = 0;
+            auto loc = 0;
             path.push_back(i);
             location[i].first = number;
             location[i].second = loc++;
@@ -114,8 +112,8 @@ void build_heavy_light(vector<vector<int>>& decomposition, vector<uint8_t> const
             while(to_parent_edge_heavy[p]){
                 p = parent[p];
                 location[p].first = number;
-                location[p].second = loc++;
                 path.push_back(p);
+                location[p].second = loc++;
             }
 
             decomposition.emplace_back(path);
@@ -184,14 +182,16 @@ int get_max(int p, int v, vector<path> const& decomposition, vector<pair<int, in
         return path.max(path_info[v].second, path_info[p].second);
     }
 
-    auto max = decomposition[path_info[v].first].max_suffix(path_info[v].second);
+    auto const& v_path = decomposition[path_info[v].first];
+    auto max = v_path.max_suffix(path_info[v].second);
+    v = parent[v_path.vectices[v_path.vectices.size() - 1]];
     while(path_info[v].first != parent_path) {
         auto const& path = decomposition[path_info[v].first];
         max = std::max(max, path.max());
         v = parent[path.vectices[path.vectices.size() - 1]];
     }
 
-    return std::max(max, decomposition[parent_path].max_prefix(path_info[p].second));
+    return std::max(max, decomposition[parent_path].max(path_info[v].second, path_info[p].second));
 }
 
 int main() {
@@ -220,7 +220,7 @@ int main() {
     build_heavy_light(heavy_pathes, has_heavy_edge, to_parent_edge_heavy, parent, path_location);
     vector<path> decomposition;
     for (auto& heavy_path : heavy_pathes) {
-        decomposition.emplace_back(path(move(heavy_path)));
+        decomposition.push_back(path(heavy_path));
     }
 
     auto log_n = static_cast<int>(ceil(log2(n)));
@@ -230,13 +230,15 @@ int main() {
     int q;
     std::cin >> q;
     std::vector<int> result;
+    std::vector<int> emit_level(n, 0);
     char query_type;
     for (auto i = 0; i < q; ++i) {
         std::cin >> query_type >> u >> v; --u;
         if (query_type == 'I') {
             auto path_num = path_location[u].first;
             auto num_in_path = path_location[u].second;
-            decomposition[path_num].update(num_in_path, v);
+            emit_level[u] += v;
+            decomposition[path_num].update(num_in_path, emit_level[u]);
         }
         else {
             --v;
