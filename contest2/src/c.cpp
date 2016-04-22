@@ -35,7 +35,7 @@ int main() {
 
     size_t matching_size = 0;
     vector<uint8_t> visited(n, 0);
-    vector<int> matching(n, -1);
+    vector<int> matching(m, -1);
     for (size_t i = 0; i < n; ++i) {
         visited.assign(n, 0);
         matching_size += build_path(i, graph, visited, matching) ? 1 : 0;
@@ -43,9 +43,9 @@ int main() {
 
     cout << matching_size << endl;
 
-    for (size_t i = 0; i < n; ++i) {
+    for (size_t i = 0; i < m; ++i) {
         if(matching[i] != -1) {
-            cout << i + 1 << " " << matching[i] + 1 << endl;
+            cout << matching[i] + 1 << " " << i + 1 << endl;
         }
     }
 
