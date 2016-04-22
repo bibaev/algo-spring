@@ -1,111 +1,94 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <queue>
+#include <memory>
+const int INFTY = 100000000;
+using graph_t = std::vector<std::vector<std::pair<int, int>>>;
 
-using graph_t = std::vector<std::vector<int>>;
-
-std::vector<int> get_reversed_path(int from, int to, std::vector<int> const& prev) {
-    std::vector<int> result;
-    auto current = to;
-    while (current != from) {
-        result.push_back(current);
-        current = prev[current];
+struct cmp {
+    bool operator()(std::pair<int, int> const& left, std::pair<int, int> const& right) const {
+        return left.second < right.second;
     }
-    result.push_back(from);
+};
 
-    return result;
-}
-
-void remove_path(graph_t& graph, std::vector<int> const& path) {
+void dijkstra(int v, graph_t const& graph, std::vector<long long>& dist, std::vector<int>& prev) {
     auto n = graph.size();
-    for (size_t i = 0; i < path.size() - 1; ++i) {
-        auto pos = find(graph[path[i]].begin(), graph[path[i]].end(), path[i + 1]);
-        graph[path[i]].erase(pos);
-    }
-}
+    dist.clear(); dist.resize(n); dist.assign(n, INFTY);
+    prev.clear(); prev.resize(n); prev.assign(n, -1);
 
-void bfs(int v, graph_t const& graph, std::vector<int>& prev) {
-    std::vector<uint8_t> visited(graph.size(), 0);
-    std::queue<int> queue;
-    queue.push(v);
+    dist[v] = 0;
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, cmp> queue;
+    queue.push(std::make_pair(v, 0));
     while(!queue.empty()) {
-        auto u = queue.front(); queue.pop();
-        if (visited[u]) continue;
-        visited[u] = 1;
-        for (auto n : graph[u]) {
-            if (!visited[n]) {
-                if (prev[n] == -1) {
-                    prev[n] = u;
-                }
-                queue.push(n);
+        auto p = queue.top(); queue.pop();
+        if (p.second > dist[p.first]) continue;
+        for(auto neig : graph[p.first]) {
+            auto new_dist = dist[p.first] + neig.second;
+            if(new_dist < dist[neig.first]) {
+                dist[neig.first] = new_dist;
+                prev[neig.first] = p.first;
+                queue.push({ neig.first, new_dist });
             }
         }
     }
 }
 
-//void dfs(int v, graph_t const& graph, std::vector<uint8_t>& visited, std::vector<int>& prev) {
-//    visited[v] = 1;
-//    for (auto u : graph[v]) {
-//        if (!visited[u]) {
-//            prev[u] = v;
-//            dfs(u, graph, visited, prev);
-//        }
-//    }
-//}
+std::vector<int> build_path(int to, std::vector<int> const& prev) {
+    std::vector<int> result;
+    auto current = to;
+    while (current != -1) {
+        result.push_back(current);
+        current = prev[current];
+    }
+    reverse(result.begin(), result.end());
+    return result;
+}
 
 int main() {
     using namespace std;
     size_t n, m, apricot, home;
     cin >> n >> m >> apricot >> home; --apricot; --home;
-    if (apricot == home) {
-        cout << "YES" << endl;
-        cout << home + 1 << endl;
-        cout << home + 1 << endl;
-        return 0;
-    }
 
     graph_t graph(n);
     for (size_t i = 0; i < m; ++i) {
         int from, to;
         cin >> from >> to; --from; --to;
-        graph[from].push_back(to);
+        graph[from].emplace_back(to, 1);
     }
 
-    vector<int> prev(n, -1);
-    bfs(apricot, graph, prev);
-    if (prev[home] == -1) {
+    vector<long long> dist;
+    vector<int> prev;
+
+    dijkstra(apricot, graph, dist, prev);
+    if(dist[home] == INFTY) {
         cout << "NO" << endl;
         return 0;
     }
 
-    auto path1(get_reversed_path(apricot, home, prev));
-    reverse(path1.begin(), path1.end());
+    auto path1(build_path(home, prev));
 
-    remove_path(graph, path1);
+    for (size_t i = 0; i < path1.size() - 1; ++i) {
+        size_t ix = path1[i + 1];
+        auto pos = std::find_if(graph[i].begin(), graph[i].end(), [ix](pair<int, int> const& p) { return p.first == ix; });
+        pos->second = 2 * n;
+    }
 
-    prev.assign(n, -1);
-    bfs(apricot, graph, prev);
-    if (prev[home] == -1) {
+    dijkstra(apricot, graph, dist, prev);
+    if(dist[home] > n) {
         cout << "NO" << endl;
         return 0;
     }
 
-    auto path2(get_reversed_path(apricot, home, prev));
-    reverse(path2.begin(), path2.end());
+    auto path2(build_path(home, prev));
 
     cout << "YES" << endl;
-    for (size_t i = 0; i < path1.size() - 1; ++i) {
-        cout << path1[i] + 1 << " ";
+    for(auto v : path1) {
+        std::cout << v + 1 << " ";
     }
+    cout << endl;
 
-    cout << path1.back() + 1 << endl;
-
-    for (size_t i = 0; i < path2.size() - 1; ++i) {
-        cout << path2[i] + 1 << " ";
+    for (auto v : path2) {
+        std::cout << v + 1 << " ";
     }
-
-    cout << path2.back() + 1 << endl;
-
-    return 0;
+    cout << endl;
 }

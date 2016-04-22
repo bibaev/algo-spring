@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
 
-using graph_t = std::vector<std::vector<int>>;
+using b_graph_t = std::vector<std::vector<int>>;
 
-bool build_path(int v, graph_t const& graph, std::vector<uint8_t>& visited, std::vector<int>& matching) {
+bool build_path(int v, b_graph_t const& graph, std::vector<uint8_t>& visited, std::vector<int>& matching) {
     if (visited[v]) {
         return false;
     }
@@ -23,7 +23,7 @@ int main() {
     using namespace std;
     size_t n, m;
     cin >> n >> m;
-    graph_t graph(n);
+    b_graph_t graph(n);
     for (size_t i = 0; i < n; ++i) {
         size_t val;
         cin >> val;

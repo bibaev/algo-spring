@@ -8,8 +8,6 @@ const int INFTY = 1000000;
 struct edge;
 using graph_t = std::vector<std::vector<std::shared_ptr<edge>>>;
 
-
-using stream_info_t = std::multimap<std::pair<int, int>, std::shared_ptr<edge>>;
 struct edge {
     edge(int from, int to, int c, std::shared_ptr<edge> back)
         : from(from),
@@ -52,7 +50,6 @@ int main() {
     using namespace std;
     size_t n, m;
     cin >> n >> m;
-    stream_info_t stream;
     graph_t graph(n);
     vector<shared_ptr<edge>> edges;
     for (size_t i = 0; i < m; ++i) {
