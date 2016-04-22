@@ -22,7 +22,7 @@ int main() {
     auto d = egcd(a, m, x, y);
     if(d == 1) {
         if (x < 0) {
-            x += m;
+            x = x % m + m;
         }
 
         cout << x;
