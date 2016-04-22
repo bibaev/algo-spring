@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <queue>
 
 using graph_t = std::vector<std::vector<int>>;
 
@@ -23,20 +25,46 @@ void remove_path(graph_t& graph, std::vector<int> const& path) {
     }
 }
 
-void dfs(int v, graph_t const& graph, std::vector<uint8_t>& visited, std::vector<int>& prev) {
-    visited[v] = 1;
-    for (auto u : graph[v]) {
-        if (!visited[u]) {
-            prev[u] = v;
-            dfs(u, graph, visited, prev);
+void bfs(int v, graph_t const& graph, std::vector<int>& prev) {
+    std::vector<uint8_t> visited(graph.size(), 0);
+    std::queue<int> queue;
+    queue.push(v);
+    while(!queue.empty()) {
+        auto u = queue.front(); queue.pop();
+        if (visited[u]) continue;
+        visited[u] = 1;
+        for (auto n : graph[u]) {
+            if (!visited[n]) {
+                if (prev[n] == -1) {
+                    prev[n] = u;
+                }
+                queue.push(n);
+            }
         }
     }
 }
+
+//void dfs(int v, graph_t const& graph, std::vector<uint8_t>& visited, std::vector<int>& prev) {
+//    visited[v] = 1;
+//    for (auto u : graph[v]) {
+//        if (!visited[u]) {
+//            prev[u] = v;
+//            dfs(u, graph, visited, prev);
+//        }
+//    }
+//}
 
 int main() {
     using namespace std;
     size_t n, m, apricot, home;
     cin >> n >> m >> apricot >> home; --apricot; --home;
+    if (apricot == home) {
+        cout << "YES" << endl;
+        cout << home + 1 << endl;
+        cout << home + 1 << endl;
+        return 0;
+    }
+
     graph_t graph(n);
     for (size_t i = 0; i < m; ++i) {
         int from, to;
@@ -45,8 +73,7 @@ int main() {
     }
 
     vector<int> prev(n, -1);
-    vector<uint8_t> visited(n, 0);
-    dfs(apricot, graph, visited, prev);
+    bfs(apricot, graph, prev);
     if (prev[home] == -1) {
         cout << "NO" << endl;
         return 0;
@@ -57,9 +84,8 @@ int main() {
 
     remove_path(graph, path1);
 
-    visited.assign(n, 0);
     prev.assign(n, -1);
-    dfs(apricot, graph, visited, prev);
+    bfs(apricot, graph, prev);
     if (prev[home] == -1) {
         cout << "NO" << endl;
         return 0;

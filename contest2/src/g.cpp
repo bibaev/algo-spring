@@ -22,21 +22,21 @@ struct edge {
 
     int from;
     int to;
-    double c;
-    double f;
+    long long c;
+    long long f;
     bool is_back;
     std::shared_ptr<edge> back;
 };
 
-double dfs(int v, double c_min, graph_t const& graph, std::vector<uint8_t>& visited, int to) {
+long long dfs(int v, long long c_min, graph_t const& graph, std::vector<uint8_t>& visited, int to) {
     if (v == to) {
         return c_min;
     }
 
     visited[v] = 1;
     for (auto e : graph[v]) {
-        if (!visited[e->to] && abs(e->f) < e->c) {
-            auto d = dfs(e->to, std::min(c_min, e->c - abs(e->f)), graph, visited, to);
+        if (!visited[e->to] && e->f < e->c) {
+            auto d = dfs(e->to, std::min(c_min, e->c - e->f), graph, visited, to);
             if (d > 0) {
                 e->f += d;
                 e->back->f -= d;
@@ -75,7 +75,7 @@ int main() {
         total += c;
     }
 
-    cout << static_cast<double>(total) << endl;;
+    cout << total << endl;
     for (auto const& e : edges) {
         cout << e->f << endl;
     }
