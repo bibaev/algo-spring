@@ -26,7 +26,7 @@ using graph_t = std::vector<std::vector<std::shared_ptr<edge>>>;
 void dfs(int v, graph_t const& graph, std::vector<uint8_t>& visited) {
     visited[v] = 1;
     for(auto e : graph[v]) {
-        if(!visited[v] && e->f < e->c) {
+        if(!visited[e->to] && e->f < e->c) {
             dfs(e->to, graph, visited);
         }
     }
@@ -42,6 +42,7 @@ long long iteration(graph_t graph, int s, int t) {
     static std::vector<std::shared_ptr<edge>> prev(graph.size());
     static std::vector<uint8_t> visited(graph.size());
     prev.assign(graph.size(), nullptr);
+    clear(queue);
     visited.assign(graph.size(), 0);
     queue.push(s);
     while(!queue.empty()) {
@@ -98,7 +99,7 @@ std::vector<uint8_t> edmonds_karp(graph_t& graph, int s, int t, long long& total
 
 int main() {
     using namespace std;
-    int n, m;
+    size_t n, m;
     cin >> n >> m;
     graph_t graph(n);
     vector<shared_ptr<edge>> edges;
@@ -125,7 +126,7 @@ int main() {
     }
 
     cout << result.size() << " " << total << endl;
-    for (auto j = 0; j < result.size() -1; ++j) {
+    for (size_t j = 0; j < result.size() - 1; ++j) {
         cout << result[j] + 1 << " ";
     }
 
