@@ -78,7 +78,7 @@ std::vector<int> build_path(int to, std::vector<std::shared_ptr<edge>> const& pr
 
 void print(std::vector<int> const& v) {
     if (v.size() == 0) return;
-    for (auto i = 0; i < v.size() - 1; ++i) {
+    for (size_t i = 0; i < v.size() - 1; ++i) {
         std::cout << v[i] + 1 << " ";
     }
 
