@@ -40,7 +40,8 @@ void bfs(int vertex, std::vector<uint8_t>& visited, b_graph_t const& graph) {
 }
 
 void print(std::vector<int> const& v) {
-    for (size_t i = 0; i < v.size() - 1; ++i) {
+    if (v.size() == 0) return;
+    for (auto i = 0; i < v.size() - 1; ++i) {
         std::cout << v[i] + 1 << " ";
     }
 
@@ -94,7 +95,7 @@ void solve(int n, int m) {
     vector<uint8_t> visited_directed(n + m);
     visited_directed.assign(n + m, 0);
     for (size_t i = 0; i < n; ++i) {
-        if (left_free[i] == 0 && !visited[i]) continue;
+        if (left_free[i] == 0 && !visited_directed[i]) continue;
 
         bfs(i, visited_directed, directed_graph);
     }
