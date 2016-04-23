@@ -2,12 +2,13 @@
 #include <vector>
 #include <queue>
 #include <memory>
+#include <algorithm>
 const int INFTY = 100000000;
 using graph_t = std::vector<std::vector<std::pair<int, int>>>;
 
 struct cmp {
     bool operator()(std::pair<int, int> const& left, std::pair<int, int> const& right) const {
-        return left.second < right.second;
+        return left.second > right.second;
     }
 };
 
@@ -69,7 +70,7 @@ int main() {
 
     for (size_t i = 0; i < path1.size() - 1; ++i) {
         size_t ix = path1[i + 1];
-        auto pos = std::find_if(graph[i].begin(), graph[i].end(), [ix](pair<int, int> const& p) { return p.first == ix; });
+        auto pos = std::find_if(graph[path1[i]].begin(), graph[path1[i]].end(), [ix](pair<int, int> const& p) { return p.first == ix; });
         pos->second = 2 * n;
     }
 
