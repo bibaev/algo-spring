@@ -53,7 +53,7 @@ long long dfs(int v, long long c_min, graph_t const& graph, std::vector<uint8_t>
     return 0;
 }
 
-inline int get_val(char c) {
+int get_val(char c) {
     switch(c) {
     case 'H':
         return 1;
@@ -80,7 +80,6 @@ int main() {
     using namespace std;
     size_t n, m;
     cin >> n >> m;
-    size_t total_val = 0;
     picture pic(n);
     int l_part, r_part;
     l_part = r_part = 0;
@@ -93,7 +92,6 @@ int main() {
             cin >> c;
             auto mol = make_shared<molecule>();
             mol->val = get_val(c);
-            total_val += mol->val;
             mol->part = (i + j) % 2 == 1 ? 1 : 2;
             if(mol->val != 0) {
                 if(mol->part == 1) {
@@ -127,17 +125,19 @@ int main() {
     graph_t graph(2);
     auto v_num = 2;
     for(auto molecule : right) {
+        if (molecule->val == 0) continue;
         graph.emplace_back();
         molecule->num = v_num++;
         add_egde(graph, 1, molecule->num, molecule->val);
     }
 
     for(auto molecule : left) {
+        if (molecule->val == 0) continue;
         for(auto r : molecule->neigs) {
             if (r->val == 0) continue;
             graph.emplace_back();
             auto v = v_num++;
-            add_egde(graph, v, r->num, 1);
+            add_egde(graph, r->num, v, 1);
             for (int k = 0; k < molecule->val; ++k) {
                 graph.emplace_back();
                 auto u = v_num++;
