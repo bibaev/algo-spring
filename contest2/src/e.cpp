@@ -4,7 +4,7 @@
 using b_graph_t = std::vector<std::vector<int>>;
 
 struct order {
-    order(int time, const std::pair<int, int> const& from, std::pair<int, int> const& to)
+    order(int time, std::pair<int, int> const& from, std::pair<int, int> const& to)
         : time(time),
           from(from),
           to(to) {}
