@@ -3,132 +3,74 @@
 #include <algorithm>
 #include <memory>
 
-const int INFTY = 1000000;
+const int INFTY = 10000000;
 using b_graph_t = std::vector<std::vector<int>>;
 
-const int INFTY = 100000000;
-struct edge {
-    edge(int from, int to, int c, std::shared_ptr<edge> back)
-        : from(from),
-        to(to),
-        c(c),
-        f(0),
-        is_back(false),
-        back(back) {
+int build_path(int v, b_graph_t const& graph, std::vector<uint8_t>& visited, std::vector<int>& matching, std::vector<int>& rev_matching) {
+    if (visited[v]) {
+        return false;
     }
 
-    int from;
-    int to;
-    long long c;
-    long long f;
-    bool is_back;
-    std::shared_ptr<edge> back;
-};
-
-using graph_t = std::vector<std::vector<std::shared_ptr<edge>>>;
-
-void dfs(int v, graph_t const& graph, std::vector<uint8_t>& visited) {
     visited[v] = 1;
-    for(auto e : graph[v]) {
-        if(!visited[e->to] && e->f < e->c) {
-            dfs(e->to, graph, visited);
-        }
-    }
-}
-
-void clear(std::queue<int> &q) {
-    std::queue<int> empty;
-    swap(q, empty);
-}
-
-long long iteration(graph_t graph, int s, int t) {
-    static std::queue<int> queue;
-    static std::vector<std::shared_ptr<edge>> prev(graph.size());
-    static std::vector<uint8_t> visited(graph.size());
-    prev.assign(graph.size(), nullptr);
-    clear(queue);
-    visited.assign(graph.size(), 0);
-    queue.push(s);
-    while(!queue.empty()) {
-        auto v = queue.front(); queue.pop();
-        if (visited[v]) continue;
-        visited[v] = 1;
-        for(auto e : graph[v]) {
-            if (!visited[e->to] && e->f < e->c) {
-                queue.push(e->to);
-                if(prev[e->to] == nullptr) {
-                    prev[e->to] = e;
-                    if(e->to == t) {
-                        clear(queue);
-                        break;
-                    }
-                }
-            }
+    for (auto u : graph[v]) {
+        if (matching[u] == -1 || build_path(matching[u], graph, visited, matching, rev_matching)) {
+            matching[u] = v;
+            rev_matching[v] = u;
+            return true;
         }
     }
 
-    if(prev[t] == nullptr) {
-        return 0;
-    }
-
-    auto current = prev[t];
-    long long c_min = INFTY;
-    while (current != nullptr) {
-        c_min = std::min(c_min, current->c - current->f);
-        current = prev[current->from];
-    }
-    
-    current = prev[t];
-    while (current != nullptr) {
-        current->f += c_min;
-        current->back->f -= c_min;
-        current = prev[current->from];
-    }
-
-    return c_min;
+    return false;
 }
+
 int main() {
     using namespace std;
     int n, m, k;
     cin >> n >> m >> k;
     b_graph_t graph(n);
-    b_graph_t edges(n);
-    vector<int> matching(m, -1);
-    for (size_t i = 0; i < k; ++i) {
-        int from, to;
-        cin >> from >> to; --from; --to;
-        edges[from].push_back(to);
+    vector<vector<int>> d(n + 1);
+    for (int i = 0; i < k; ++i) {
+        int left, right;
+        cin >> left >> right; --left; --right;
+        graph[left].push_back(right);
     }
 
-    int left = 0, right = 0;
-    long result = 0;
-    std::vector<uint8_t> visited(n, 0);
-    std::vector<int> l_mathing(n, -1);
-    size_t matching_size = 0;
-    while(left < n && right < n) {
-        while(right < n && matching_size < m) {
-            graph[right] = move(edges[right]);
+    for (int i = 0; i < n + 1; ++i) {
+        d[i].resize(n, 0);
+    }
+
+    for (int i = 0; i < n; ++i) {
+        d[i][i] = (m == 1 && graph[i].size() > 0) ? 1 : 0;
+    }
+
+    vector<int> min_r(n, INFTY);
+    vector<int> matching(m, -1);
+    vector<uint8_t> visited(n, 0);
+    vector<int> rev_matching(n, -1);
+    long matching_size = 0;
+    int right = 0;
+    for (int left = 0; left < n; left++) {
+        while (matching_size < m && right < n) {
             visited.assign(n, 0);
-            l_mathing[right] = build_path(right, graph, visited, matching);
-            matching_size += l_mathing[right] != -1 ? 1 : 0;
-            ++right;
+            matching_size += build_path(right++, graph, visited, matching, rev_matching) ? 1 : 0;
         }
 
-        while (matching_size == m) {
-            if(l_mathing[left] != -1) {
+        if(matching_size == m) {
+            min_r[left] = right - 1;
+            if(rev_matching[left] != -1) {
+                matching[rev_matching[left]] = -1;
+                rev_matching[left] = -1;
                 matching_size -= 1;
             }
-
-            matching[l_mathing[left]] = -1;
-            graph[left].clear();
-            ++left;
-            result += n + 1 - right;
         }
-        
-        
     }
 
-    cout << result << endl;
+    for (int j = 1; j < n; ++j) {
+        for (int i = j - 1; i >= 0; --i) {
+            d[i][j] = d[i + 1][j] + d[i][j - 1] + (min_r[i] <= j ? 1 : 0) - d[i + 1][j - 1];
+        }
+    }
 
+    cout << d[0].back() << endl;
     return 0;
 }
