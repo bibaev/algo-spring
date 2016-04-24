@@ -4,7 +4,9 @@
 #include <memory>
 
 const int INFTY = 1000000;
+using b_graph_t = std::vector<std::vector<int>>;
 
+const int INFTY = 100000000;
 struct edge {
     edge(int from, int to, int c, std::shared_ptr<edge> back)
         : from(from),
@@ -25,99 +27,106 @@ struct edge {
 
 using graph_t = std::vector<std::vector<std::shared_ptr<edge>>>;
 
-long long dfs(int v, long long c_min, graph_t const& graph, std::vector<uint8_t>& visited, int to) {
-    if (v == to) {
-        return c_min;
-    }
-
+void dfs(int v, graph_t const& graph, std::vector<uint8_t>& visited) {
     visited[v] = 1;
-    for (auto e : graph[v]) {
-        if (!visited[e->to] && e->f < e->c) {
-            auto d = dfs(e->to, std::min(c_min, e->c - e->f), graph, visited, to);
-            if (d > 0) {
-                e->f += d;
-                e->back->f -= d;
-                return d;
+    for(auto e : graph[v]) {
+        if(!visited[e->to] && e->f < e->c) {
+            dfs(e->to, graph, visited);
+        }
+    }
+}
+
+void clear(std::queue<int> &q) {
+    std::queue<int> empty;
+    swap(q, empty);
+}
+
+long long iteration(graph_t graph, int s, int t) {
+    static std::queue<int> queue;
+    static std::vector<std::shared_ptr<edge>> prev(graph.size());
+    static std::vector<uint8_t> visited(graph.size());
+    prev.assign(graph.size(), nullptr);
+    clear(queue);
+    visited.assign(graph.size(), 0);
+    queue.push(s);
+    while(!queue.empty()) {
+        auto v = queue.front(); queue.pop();
+        if (visited[v]) continue;
+        visited[v] = 1;
+        for(auto e : graph[v]) {
+            if (!visited[e->to] && e->f < e->c) {
+                queue.push(e->to);
+                if(prev[e->to] == nullptr) {
+                    prev[e->to] = e;
+                    if(e->to == t) {
+                        clear(queue);
+                        break;
+                    }
+                }
             }
         }
     }
 
-    return 0;
-}
+    if(prev[t] == nullptr) {
+        return 0;
+    }
 
-std::shared_ptr<edge> add_edge(graph_t& graph, int from, int to, long long c) {
-    auto e1 = std::make_shared<edge>(from, to, c, nullptr);
-    auto e2 = std::make_shared<edge>(to, from, 0, e1);
-    e1->back = e2;
-    graph[e1->from].push_back(e1);
-    graph[e2->from].push_back(e2);
+    auto current = prev[t];
+    long long c_min = INFTY;
+    while (current != nullptr) {
+        c_min = std::min(c_min, current->c - current->f);
+        current = prev[current->from];
+    }
     
-    return e1;
+    current = prev[t];
+    while (current != nullptr) {
+        current->f += c_min;
+        current->back->f -= c_min;
+        current = prev[current->from];
+    }
+
+    return c_min;
 }
-
-bool decrease_stream(graph_t const& graph, std::shared_ptr<edge> e, int to) {
-    if(e->f == 0) {
-        return false;
-    }
-
-    e->f = e->back->f = 0;
-    if (e->to == to) {
-        return true;
-    }
-
-    for(auto n : graph[e->to]) {
-        if(n-> c != 0 && n->f != 0) {
-            return decrease_stream(graph, n, to);
-        }
-    }
-
-    return false;
-}
-
 int main() {
     using namespace std;
     int n, m, k;
     cin >> n >> m >> k;
-    graph_t graph(2 + m + n);
-
+    b_graph_t graph(n);
+    b_graph_t edges(n);
+    vector<int> matching(m, -1);
     for (size_t i = 0; i < k; ++i) {
         int from, to;
         cin >> from >> to; --from; --to;
-        add_edge(graph, from + 2, to + 2 + n, 1);
+        edges[from].push_back(to);
     }
 
-    vector<shared_ptr<edge>> lefts;
-    for (int i = 0; i < n; ++i) {
-        auto e = add_edge(graph, 0, i + 2, 0);
-        lefts.push_back(e);
-    }
-
-    for (int i = 0; i < m; ++i) {
-        add_edge(graph, n + 2 + i, 1, 1);
-    }
-
-    long long result = 0;
-    int size = graph.size();
-    vector<uint8_t> visited(size, 0);
-    int right = 0;
-    int left = 0;
-    auto stream = 0;
-    auto c = 0;
+    int left = 0, right = 0;
+    long result = 0;
+    std::vector<uint8_t> visited(n, 0);
+    std::vector<int> l_mathing(n, -1);
+    size_t matching_size = 0;
     while(left < n && right < n) {
-        while (right < n && stream < m) {
-            lefts[right++]->c = 1;
-            visited.assign(size, 0);
-            c = dfs(0, INFTY, graph, visited, 1);
-            stream += c;
+        while(right < n && matching_size < m) {
+            graph[right] = move(edges[right]);
+            visited.assign(n, 0);
+            l_mathing[right] = build_path(right, graph, visited, matching);
+            matching_size += l_mathing[right] != -1 ? 1 : 0;
+            ++right;
         }
 
-        if(stream == m) {
+        while (matching_size == m) {
+            if(l_mathing[left] != -1) {
+                matching_size -= 1;
+            }
+
+            matching[l_mathing[left]] = -1;
+            graph[left].clear();
+            ++left;
             result += n + 1 - right;
-            stream -= decrease_stream(graph, lefts[left++], 1) ? 1 : 0;
-            lefts[left - 1]->c = 0;
         }
+        
+        
     }
-    
 
     cout << result << endl;
 
