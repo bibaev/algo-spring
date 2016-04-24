@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <random>
 
 const int INFTY = 10000000;
 using b_graph_t = std::vector<std::vector<int>>;
@@ -28,21 +29,13 @@ int main() {
     int n, m, k;
     cin >> n >> m >> k;
     b_graph_t graph(n);
-    vector<vector<int>> d(n + 1);
     for (int i = 0; i < k; ++i) {
         int left, right;
         cin >> left >> right; --left; --right;
         graph[left].push_back(right);
     }
 
-    for (int i = 0; i < n + 1; ++i) {
-        d[i].resize(n, 0);
-    }
-
-    for (int i = 0; i < n; ++i) {
-        d[i][i] = (m == 1 && graph[i].size() > 0) ? 1 : 0;
-    }
-
+    reverse(graph.begin(), graph.end());
     vector<int> min_r(n, INFTY);
     vector<int> matching(m, -1);
     vector<uint8_t> visited(n, 0);
@@ -51,7 +44,7 @@ int main() {
     int right = 0;
     for (int left = 0; left < n; left++) {
         while (matching_size < m && right < n) {
-            visited.assign(n, 0);
+            fill(visited.begin(), visited.end(), 0);
             matching_size += build_path(right++, graph, visited, matching, rev_matching) ? 1 : 0;
         }
 
@@ -61,16 +54,25 @@ int main() {
                 matching[rev_matching[left]] = -1;
                 rev_matching[left] = -1;
                 matching_size -= 1;
+                for (size_t t = right - 1; t >= left + 1; --t) {
+                    if(rev_matching[t] == -1) {
+                        fill(visited.begin(), visited.end(), 0);
+                        auto c = build_path(t, graph, visited, matching, rev_matching) ? 1 : 0;
+                        matching_size += c;
+                        if (c) break;
+                    }
+                }
             }
         }
     }
 
-    for (int j = 1; j < n; ++j) {
-        for (int i = j - 1; i >= 0; --i) {
-            d[i][j] = d[i + 1][j] + d[i][j - 1] + (min_r[i] <= j ? 1 : 0) - d[i + 1][j - 1];
-        }
+    long result = 0;
+    for (int i = 0; i < n; ++i) {
+        if(min_r[i] != INFTY)
+            result += n - min_r[i];
     }
 
-    cout << d[0].back() << endl;
+    cout << result << endl;
+
     return 0;
 }
