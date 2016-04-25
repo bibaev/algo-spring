@@ -61,12 +61,12 @@ int main() {
         --left; --right;
         graph[left].push_back(right);
     }
+
     for (int i = 0; i < right_graph.size(); ++i) {
         right_graph[i].second.reserve(2000);
     }
 
     vector<int> matching(m, -1);
-    vector<uint8_t> visited(n, 0);
     vector<uint8_t> visited_right(m, 0);
     vector<int> rev_matching(n, -1);
     long matching_size = 0;
@@ -82,11 +82,15 @@ int main() {
 
             fill(visited_right.begin(), visited_right.end(), 0);
             auto res = build_path(unmached, right_graph, visited_right.data(), rev_matching, matching, left) ? 1 : 0;
-            while(res != 0 && matching_size != m) {
-                matching_size += res;
+            if (res)
                 ++unmached;
+            matching_size += res;
+            while(res != 0 && matching_size != m && unmached < m) {
                 fill(visited_right.begin(), visited_right.end(), 0);
                 res = build_path(unmached, right_graph, visited_right.data(), rev_matching, matching, left) ? 1 : 0;
+                if (res)
+                    ++unmached;
+                matching_size += res;
             }
         }
 
