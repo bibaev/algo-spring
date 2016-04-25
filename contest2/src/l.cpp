@@ -57,7 +57,7 @@ int main() {
     std::vector<pair<int, vector<int>>> right_graph(m);
     for (int i = 0; i < k; ++i) {
         int left, right;
-        scanf("%d%d", &left, &right);
+        auto r = scanf("%d%d", &left, &right);
         --left; --right;
         graph[left].push_back(right);
     }
