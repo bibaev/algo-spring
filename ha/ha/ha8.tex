@@ -1,4 +1,4 @@
-\section*{Линейное программирование}
+\section{Линейное программирование}
 \begin{enumerate}
 	\item Сведите к задаче линейного программирования задачу:
 	\begin{equation*}
@@ -46,7 +46,8 @@
 	модулей соответствует максимальному значению суммы. Всего вариантов раскрыть модули $2^p$, которые можно 
 	перенумеровать и переформулировать задачу:
 	\begin{equation*}
-		\max\limits_{0 \leqslant k \leqslant 2^p - 1}\left[\sum\limits_{i = 1}^p sign(k, i) \left(\sum\limits_{j = 1}^{n} c_{ij}x_j - d_i \right) \right] \to \min
+		\max\limits_{0 \leqslant k \leqslant 2^p - 1}\left[\sum\limits_{i = 1}^p sign(k, i) 
+		\left(\sum\limits_{j = 1}^{n} c_{ij}x_j - d_i \right) \right] \to \min
 	\end{equation*}
 	
 	где $sign(k, i) = 1$, когда $i$-ый бит числа $k$ равен $0$ и $sign(k, i) = -1$  когда $i$-ый бит числа $k$ 
