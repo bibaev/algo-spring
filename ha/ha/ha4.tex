@@ -25,7 +25,8 @@
 		
 		\item Докажите, что любое $k + 1$-независимое семейство хэш-функций является $k$-независимым.
 		
-		\textbf{Решение.} Зафиксируем первые $k$ значений $x_i$. Тогда достаточно просуммировать по всем $y_i$. Получим соотношение для $k-$ независимости.
+		\textbf{Решение.} Зафиксируем первые $k$ значений $x_i$. Тогда достаточно просуммировать по всем 
+		$y_i$. Получим соотношение для $k-$ независимости.
 		
 	\end{enumerate}
 	
@@ -72,7 +73,8 @@
 		
 		\textbf{Решение.} 
 		
-		Воспользуемся формулой $\binom{n}{k} = \dfrac{n!}{k!(n-k)!}$ и так же формулой Стирлинга: $n! \approx \sqrt{2\pi n}\left(\dfrac{n}{e}\right)^n$
+		Воспользуемся формулой $\binom{n}{k} = \dfrac{n!}{k!(n-k)!}$ и так же формулой Стирлинга: $n! 
+		\approx \sqrt{2\pi n}\left(\dfrac{n}{e}\right)^n$
 		
 		\begin{align*}
 			Q_k &= \binom{n}{k}\cdot \left( \frac{1}{n} \right)^k \cdot \left(1 - \frac{1}{n} \right)^{n-k} =
@@ -82,12 +84,15 @@
 			&=\binom{n}{k} \cdot \left( \frac{n - 1}{n} \right)^n \cdot \left(\frac{1}{n - 1} \right)^{k} =
 			 \frac{n!}{k!(n-k)!} \cdot \left( \frac{n - 1}{n} \right)^n \cdot \left(\frac{1}{n - 1} \right)^{k} 
 			 =\\
-			&= \frac{n^n e^k e^{n - k}}{e^n k^k (n-k)^{n-k}}\cdot \left( \frac{n - 1}{n} \right)^n \cdot \left(\frac{1}{n - 1} \right)^{k} = \frac{n^n}{k^k (n-k)^{n-k}}\cdot \left( \frac{n - 1}{n} \right)^n \cdot \left(\frac{1}{n - 1} \right)^{k}\\
+			&= \frac{n^n e^k e^{n - k}}{e^n k^k (n-k)^{n-k}}\cdot \left( \frac{n - 1}{n} \right)^n \cdot 
+			\left(\frac{1}{n - 1} \right)^{k} = \frac{n^n}{k^k (n-k)^{n-k}}\cdot \left( \frac{n - 1}{n} 
+			\right)^n \cdot \left(\frac{1}{n - 1} \right)^{k}\\
 			&= \frac{1}{k^k} \cdot \left( \frac{n - 1}{n - k} \right)^{n - k} = \frac{1}{k^k} \left( 1+ \frac{k - 
 				1}{n - k} \right)^{n - k} \leqslant \frac{e^{k - 1}}{k^k} < \left(\dfrac{e}{k}\right)^k
 		\end{align*}
 		
-		\item Показать, что для некоторого $c \ge 1$ верно $Q_k \leqslant \frac{1}{n^3}$ при  $k\geqslant c \cdot \dfrac{\log n}{\log \log n}$.
+		\item Показать, что для некоторого $c \ge 1$ верно $Q_k \leqslant \frac{1}{n^3}$ при  $k\geqslant 
+		c \cdot \dfrac{\log n}{\log \log n}$.
 	\end{enumerate}
 	
 	\item[7.] Пусть мы можем потратить не более 100 байт памяти на предподсчет. Нужно научится по 64-битному 
@@ -100,7 +105,8 @@
 	Для решения этой задачи нам потребуется циклическая группа, элемент-генератор которой равен $2$, а количество 
 	элементов превосходит 64. Для этих целей нам подойдут 2 группы $\mathbb{Z}_{67}$ и $\mathbb{Z}_{83}$ по 
 	умножению. Выберем $\mathbb{Z}_{67}$. Тогда каждая степень двойки перейдёт в свой элемент группы и мы сможем 
-	числа $2^0, 2^1, 2^2, ..., 2^{63}$ однозначным образом хешировать (Одного байта, чтобы записать степень, не превосходящую 64 нам вполне достаточно.). То есть преподсчет будет следующий:
+	числа $2^0, 2^1, 2^2, ..., 2^{63}$ однозначным образом хешировать (Одного байта, чтобы записать степень, 
+	не превосходящую 64 нам вполне достаточно.). То есть преподсчет будет следующий:
 	\begin{lstlisting}
 	byte buf[100]
 	for k = 0..63:
