@@ -3,7 +3,7 @@ CXXFLAGS = -O2 -std=c++11
 BIN = ./bin/
 SRC = ./src/
 
-TASKS = a
+TASKS = a b c g
 all: bin $(TASKS)
 
 bin:
